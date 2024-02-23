@@ -2,15 +2,10 @@ namespace VendingMachine;
 
 public class Inventory
 {
-    public List<Product> Products { get; }
+    public Dictionary<Product, int> Products { get; } = new Dictionary<Product, int>();
     
-    public Inventory()
+    public void AddItem(Product product, int numberInStock)
     {
-        Products = new List<Product>();
-    }
-    
-    public void AddItem(Product product)
-    {
-        Products.Add(product);
+        Products.Add(product, numberInStock);
     }
 }
