@@ -69,7 +69,7 @@ public class Machine
         } while (command != "quit");
 
         Console.WriteLine("Bye!");
-        Thread.Sleep(500);
+        Thread.Sleep(1000);
     }
     
     public string GetCommand()
@@ -105,21 +105,21 @@ public class Machine
     
     public void RunCommandHelp()
     {
-        Console.WriteLine("--- Available commands: ---");
-        
-        foreach (var word in Commands)
+        var table = new ConsoleTable("Command", "Action");
+            
+        foreach (var command in Commands)
         {
-            if (word.Key != "help")
+            if (command.Key != "help")
             {
-                Console.ForegroundColor = ConsoleColor.DarkBlue;
-                Console.Write(word.Key);
-                Console.ResetColor();
-                Console.Write(" - ");
-                Console.Write(word.Value);
-                Console.WriteLine();
-                // maybe change this to a console table
+                table.AddRow(command.Key, command.Value); 
             }
         }
+        
+        Console.ForegroundColor = ConsoleColor.DarkMagenta;
+        table.Write(Format.Minimal);
+        Console.ResetColor();
+
+
     }
 
     public void RunCommandShowAccountBalance()
@@ -139,6 +139,9 @@ public class Machine
             // might be an unintuitive way of using dictionary type. might change later.
         }
         
+        Console.ForegroundColor = ConsoleColor.DarkMagenta;
         table.Write(Format.Minimal);
+        Console.ResetColor();
+        
     }
 }
