@@ -19,9 +19,9 @@ public class Machine
     public void Run()
     {
         // add some products to the inventory
-        Inventory.AddItem(new Product("Tomato", 12), 67);
-        Inventory.AddItem(new Product("Avocado", 34), 89);
-        Inventory.AddItem(new Product("Onion", 5), 10);
+        Inventory.AddItem(new Product("Tomato", 12, 67));
+        Inventory.AddItem(new Product("Avocado", 34, 89));
+        Inventory.AddItem(new Product("Onion", 5,  10));
 
         // give user some money
         User.AccountBalance = Random.Next(100, 200);
@@ -134,9 +134,7 @@ public class Machine
             
         foreach (var product in Inventory.Products)
         { 
-            table.AddRow(product.Key.Name, product.Key.Price, product.Value); 
-            // see inventory.cs
-            // might be an unintuitive way of using dictionary type. might change later.
+            table.AddRow(product.Name, product.Price, product.ItemsInStock); 
         }
         
         Console.ForegroundColor = ConsoleColor.DarkMagenta;
