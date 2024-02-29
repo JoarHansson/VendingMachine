@@ -38,24 +38,18 @@ public class Machine
         while (true)
         {
             Console.WriteLine();
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.Write("Enter your name: ");
-            Console.ResetColor();
+            ColorController.WriteYellow("Enter your name: ");
             
             User.Name = Console.ReadLine();
     
             if (!string.IsNullOrEmpty(User.Name))
             {
                 Console.WriteLine();
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine($"Welcome, {User.Name}!");
-                Console.ResetColor();
+                ColorController.WriteGreenLine($"Welcome, {User.Name}!");
                 break;
             }
     
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine("Please try again.");
-            Console.ResetColor();
+            ColorController.WriteRedLine("Please try again.");
         }
         
         
@@ -83,6 +77,7 @@ public class Machine
             }
         } while (command != "quit");
 
+        Console.WriteLine();
         Console.WriteLine("Bye!");
         Thread.Sleep(1000);
     }
@@ -92,28 +87,17 @@ public class Machine
         while (true)
         {
             Console.WriteLine();
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.Write("Input a command. Type");
-            Console.ForegroundColor = ConsoleColor.DarkBlue;
-            Console.Write(" help ");
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.Write("to list all commands: ");
-            Console.ResetColor();
-
+            ColorController.WriteYellowAndBlue(["Input a command. Type", " help ", "to list all commands: "]);
+                
             var input = Console.ReadLine()!;
 
             if (Commands.ContainsKey(input))
             {
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine("Command OK");
-                Console.ResetColor();
-
+                ColorController.WriteGreenLine("Command OK");
                 return input;
             }
             
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine("Not a valid command, try again.");
-            Console.ResetColor();
+            ColorController.WriteRedLine("Not a valid command, try again.");
         }
     }
     
@@ -129,10 +113,8 @@ public class Machine
             }
         }
         
-        Console.ForegroundColor = ConsoleColor.DarkMagenta;
         Console.WriteLine();
-        table.Write(Format.Minimal);
-        Console.ResetColor();
+        ColorController.WritePurpleTable(table);
     }
 
     public void RunCommandShowAccountBalance()
@@ -150,10 +132,8 @@ public class Machine
             table.AddRow(product.Name, product.Price, product.ItemsInStock);
         }
         
-        Console.ForegroundColor = ConsoleColor.DarkMagenta;
         Console.WriteLine();
-        table.Write(Format.Minimal);
-        Console.ResetColor();
+        ColorController.WritePurpleTable(table);
     }
 
     public void RunCommandBuyProducts()
@@ -161,36 +141,20 @@ public class Machine
         while (true)
         {
             Console.WriteLine();
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.Write("Choose a product by typing its name (type");
-            Console.ForegroundColor = ConsoleColor.DarkBlue;
-            Console.Write(" list ");
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.Write("to list the products, type");
-            Console.ForegroundColor = ConsoleColor.DarkBlue;
-            Console.Write(" home ");
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.Write("to go home): ");
-            Console.ResetColor();
-
+            ColorController.WriteYellowAndBlue(["Choose a product by typing its name (type", " list ", "to list the products, type", " home ", "to go home): "]);
+            
             var input = Console.ReadLine();
 
             if (input == "list")
             {
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine("Command OK");
-                Console.ResetColor();
-                
+                ColorController.WriteGreenLine("Command OK");
                 RunCommandListProducts();
                 continue;
             }
 
             if (input == "home")
             {
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine("Command OK");
-                Console.ResetColor();
-                
+                ColorController.WriteGreenLine("Command OK");
                 return;
             }
             
@@ -206,74 +170,57 @@ public class Machine
 
             if (chosenProduct == null)
             {
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine("Error. Are you sure you spelled correctly?");
-                Console.ResetColor();
+                ColorController.WriteRedLine("Error. Are you sure you spelled correctly?");
                 continue;
             }
             
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Console.WriteLine($"{chosenProduct.Name} selected.");
-            Console.ResetColor();
+            ColorController.WriteGreenLine($"{chosenProduct.Name} selected.");
             
             Console.WriteLine();
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.Write($"How many would you like? Enter a number between 0 and {chosenProduct.ItemsInStock}: ");
-            Console.ResetColor();
+            ColorController.WriteYellow($"How many would you like? Enter a number between 0 and {chosenProduct.ItemsInStock}: ");
                         
             var chosenNumberOfProductsString = Console.ReadLine();
                 
             if (int.TryParse(chosenNumberOfProductsString, out var chosenNumberOfProductsInt) == false)
             {
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine("Not a valid number");
-                Console.ResetColor();
+                ColorController.WriteRedLine("Not a valid number");
                 continue;
             }
 
             if (chosenNumberOfProductsInt > chosenProduct.ItemsInStock)
             {
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine("Not that many in stock.");
-                Console.ResetColor();
+                ColorController.WriteRedLine("Not that many in stock.");
                 continue;
             }
 
             if (User.AccountBalance < (chosenProduct.Price * chosenNumberOfProductsInt))
             {
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine("Not enough money in your account.");
-                Console.ResetColor();
+                ColorController.WriteRedLine("Not enough money in your account.");
                 continue;
             }
             
             if (chosenNumberOfProductsInt == 0)
             {
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine("OK, Purchase cancelled.");
-                Console.ResetColor();
+                ColorController.WriteGreenLine("OK, Purchase cancelled.");
                 return;
             }
             
             // Order summary table
-            var table = new ConsoleTable( "Product", chosenProduct.Name);
+            var table = new ConsoleTable("Order summary", "");
             
+            table.AddRow("Product", chosenProduct.Name);
             table.AddRow("Price per item", chosenProduct.Price);
             table.AddRow("Number of items", chosenNumberOfProductsInt);
             table.AddRow(" ", " ");
             table.AddRow("Total cost", chosenProduct.Price * chosenNumberOfProductsInt);
     
-            Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.WriteLine();
-            table.Write(Format.Minimal);
-            Console.ResetColor();
+            ColorController.WritePurpleTable(table);
             
             while (true)
             {
                 Console.WriteLine();
-                Console.ForegroundColor = ConsoleColor.DarkYellow;
-                Console.Write($"Your account balance: {User.AccountBalance}. Continue? (y/n): ");
-                Console.ResetColor();
+                ColorController.WriteYellowAndBlue(["You have ", User.AccountBalance.ToString(), " credits in your account. Do you wish to continue? (y/n): "]);
                 
                 var answer = Console.ReadLine();
                 
@@ -282,17 +229,13 @@ public class Machine
                     User.AccountBalance -= (chosenProduct.Price * chosenNumberOfProductsInt);
                     chosenProduct.ItemsInStock -= chosenNumberOfProductsInt;
 
-                    Console.ForegroundColor = ConsoleColor.DarkGreen;
-                    Console.WriteLine("Purchase successful. Visit \"my products\" to see what you bought.");
-                    Console.ResetColor();
+                    ColorController.WriteGreenLine("Purchase successful. Visit \"my products\" to see what you bought.");
                     return;
                 }
                 
                 if (answer.ToLower() == "n")
                 {
-                    Console.ForegroundColor = ConsoleColor.DarkGreen;
-                    Console.WriteLine("OK, Purchase cancelled.");
-                    Console.ResetColor();
+                    ColorController.WriteGreenLine("OK, Purchase cancelled.");
                     return;
                 }
             }
