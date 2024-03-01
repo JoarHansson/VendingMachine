@@ -10,20 +10,21 @@ public class Machine
         { "money", "Show your account balance." },
         { "list", "List all products, their price and inventory status." },
         { "buy", "Make a purchase (select items in next view)." },
+        { "my stuff", "Look at the stuff you bought" },
         { "quit", "Quit the application." }
     };
     
-    public Inventory Inventory { get; set; } = new Inventory();
+    public Inventory MachineInventory { get; set; } = new Inventory();
     public User User { get; set; } = new User();
     public Random Random { get; set; } = new Random();
     
     public void Run()
     {
         // add some products to the inventory
-        Inventory.AddItem(new Product("Tomato", 12, 67));
-        Inventory.AddItem(new Product("Avocado", 34, 89));
-        Inventory.AddItem(new Product("Onion", 5,  10));
-        Inventory.AddItem(new Product("Quote", 3,  8));
+        MachineInventory.AddItem(new Product("Tomato", 12, 67));
+        MachineInventory.AddItem(new Product("Avocado", 34, 89));
+        MachineInventory.AddItem(new Product("Onion", 5,  10));
+        MachineInventory.AddItem(new Product("Quote", 3,  8));
 
         // give user some money
         User.AccountBalance = Random.Next(100, 200);
@@ -75,10 +76,14 @@ public class Machine
             {
                 RunCommandBuyProducts();
             }
+            else if (command == "my stuff")
+            {
+                RunCommandShowUsersProducts();
+            }
         } while (command != "quit");
 
         Console.WriteLine();
-        Console.WriteLine("Bye!");
+        ColorController.WritePurpleLine("Bye!");
         Thread.Sleep(1000);
     }
     
@@ -120,14 +125,14 @@ public class Machine
     public void RunCommandShowAccountBalance()
     {
         Console.WriteLine();
-        Console.WriteLine($"Your account balance is {User.AccountBalance} SEK");
+        ColorController.WritePurpleLine($"You have {User.AccountBalance} credits in your account.");
     }
 
     public void RunCommandListProducts()
     {
         var table = new ConsoleTable("Product", "Price", "Items in stock");
         
-        foreach (var product in Inventory.Products)
+        foreach (var product in MachineInventory.Products)
         { 
             table.AddRow(product.Name, product.Price, product.ItemsInStock);
         }
@@ -160,7 +165,7 @@ public class Machine
             
             Product? chosenProduct = null;
 
-            foreach (var product in Inventory.Products)
+            foreach (var product in MachineInventory.Products)
             {
                 if (input == product.Name)
                 {
@@ -228,8 +233,12 @@ public class Machine
                 {
                     User.AccountBalance -= (chosenProduct.Price * chosenNumberOfProductsInt);
                     chosenProduct.ItemsInStock -= chosenNumberOfProductsInt;
-
-                    ColorController.WriteGreenLine("Purchase successful. Visit \"my products\" to see what you bought.");
+                    
+                    // todo:
+                    // check if product exists by checking its unique name, if so, increase the count. otherwise create new.   
+                    User.Inventory.AddItem(new Product(chosenProduct.Name, chosenProduct.Price, chosenNumberOfProductsInt));
+                    
+                    ColorController.WriteGreenLine("Purchase successful. Visit \"my stuff\" to see what you bought.");
                     return;
                 }
                 
@@ -240,5 +249,26 @@ public class Machine
                 }
             }
         }
+    }
+
+    public void RunCommandShowUsersProducts()
+    {
+        if (User.Inventory.Products.Count == 0)
+        {
+            Console.WriteLine();
+            ColorController.WritePurpleLine("You haven't bought anything yet. Go buy something.");
+            return;
+        }
+        
+        var table = new ConsoleTable("Product", "Price", "Items owned");
+        
+        foreach (var product in User.Inventory.Products)
+        { 
+            table.AddRow(product.Name, product.Price, product.ItemsInStock);
+        }
+        
+        Console.WriteLine();
+        ColorController.WritePurpleTable(table);
+
     }
 }
