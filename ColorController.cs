@@ -4,6 +4,7 @@ namespace VendingMachine;
 
 public class ColorController
 {
+    // Red. For errors and similar.
     public static void WriteRedLine(string input)
     {
         Console.ForegroundColor = ConsoleColor.DarkRed;
@@ -11,6 +12,7 @@ public class ColorController
         Console.ResetColor();
     }
     
+    // Green. For affirmations and similar.
     public static void WriteGreenLine(string input)
     {
         Console.ForegroundColor = ConsoleColor.DarkGreen;
@@ -18,6 +20,7 @@ public class ColorController
         Console.ResetColor();
     }
     
+    // Yellow. For instructions and questions from the machine.
     public static void WriteYellow(string input)
     {
         Console.ForegroundColor = ConsoleColor.DarkYellow;
@@ -25,6 +28,7 @@ public class ColorController
         Console.ResetColor();
     }
     
+    // Yellow/Blue. For instructions and questions from the machine, where some words need to be highlighted.
     public static void WriteYellowAndBlue(List<string> input)
     {
         for (int i = 0; i < input.Count; i++)
@@ -44,6 +48,7 @@ public class ColorController
         Console.ResetColor();
     }
     
+    // Purple. For informative tables. 
     public static void WritePurpleTable(ConsoleTable table)
     {
         Console.ForegroundColor = ConsoleColor.DarkMagenta;
@@ -51,5 +56,12 @@ public class ColorController
         Console.ResetColor();
     }
     
+    // Purple. For other information. 
+    public static void WritePurpleLine(string input)
+    {
+        Console.ForegroundColor = ConsoleColor.DarkMagenta;
+        Console.WriteLine(input);
+        Console.ResetColor();
+    }
 
 }
