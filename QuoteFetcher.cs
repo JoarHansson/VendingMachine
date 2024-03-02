@@ -4,7 +4,7 @@ namespace VendingMachine;
 
 public class QuoteFetcher
 {
-    public async void GetData()
+    public static async Task<Quote> GetData()
     {
         string baseUrl = "https://api.quotable.io/quotes/random?maxLength=50/";
 
@@ -22,26 +22,22 @@ public class QuoteFetcher
                         {
                             var dataParsed = JArray.Parse(data)[0];
                             
-                            Console.WriteLine(dataParsed);
-                            
                             Quote quote = new Quote(dataParsed["content"].ToString(), dataParsed["author"].ToString());
-                            
-                            Console.WriteLine($"Quote: {quote.Content}");
-                            Console.WriteLine($"Author: {quote.Author}");
+                            return quote;
                         }
-                        else
-                        {
-                            Console.WriteLine("Data is null!");
-                        }
+                        
+                        // (if null:)
+                        Quote altQuote = new Quote("The quote API seems to be broken...", "Joar Hansson");
+                        return altQuote;
                     }
                 }
             }
-        } 
+        }
         catch(Exception exception) 
         {
             Console.WriteLine(exception);
         }
         
+        return null;
     }
-
 }
