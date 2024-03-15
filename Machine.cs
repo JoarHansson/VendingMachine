@@ -92,7 +92,7 @@ public class Machine
         while (true)
         {
             Console.WriteLine();
-            ColorController.WriteYellowAndBlue(["Input a command. Type", " help ", "to list all commands: "]);
+            ColorController.WriteYellowAndBlue(["Input a command / get", " help", ": "]);
 
             var input = Console.ReadLine()!;
 
@@ -147,8 +147,7 @@ public class Machine
         {
             Console.WriteLine();
             ColorController.WriteYellowAndBlue([
-                "Choose a product by typing its name (type", " list ", "to list the products, type", " home ",
-                "to go home): "
+                "Choose a product /", " list ", "all products / go", " home", ": "
             ]);
 
             var input = Console.ReadLine();
@@ -170,7 +169,7 @@ public class Machine
 
             foreach (var product in MachineInventory.Products)
             {
-                if (input == product.Name)
+                if (input.ToLower() == product.Name.ToLower())
                 {
                     chosenProduct = product;
                 }
@@ -227,6 +226,7 @@ public class Machine
             ColorController.WritePurpleTable(table);
 
             GoToCheckout(chosenProduct, chosenNumberOfProductsInt);
+            return;
         }
     }
 
@@ -336,21 +336,22 @@ public class Machine
             }
 
             Console.WriteLine();
-            ColorController.WriteYellow(
-                "Enter the name of the product you wish to inspect: "); // only works with qoute so far
+            ColorController.WriteYellow("Enter the name of the product you wish to inspect: ");
+            // only works with qoute so far
 
             var answerWhichItem = Console.ReadLine();
 
             if (answerWhichItem.ToLower() == "quote")
             {
-                // todo:
-                // represent with color coding and/or table
+                var table = new ConsoleTable("Quote", "Author");
+
                 foreach (var quote in User.Inventory.Quotes)
                 {
-                    Console.WriteLine(quote.Author);
-                    Console.WriteLine(quote.Content);
-                    Console.WriteLine();
+                    table.AddRow(quote.Content, quote.Author);
                 }
+
+                Console.WriteLine();
+                ColorController.WritePurpleTable(table);
             }
         }
     }
