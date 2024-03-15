@@ -21,10 +21,10 @@ public class Machine
     public void Run()
     {
         // add some products to the inventory
-        MachineInventory.AddItem(new Product("Tomato", 12, 67));
-        MachineInventory.AddItem(new Product("Avocado", 34, 89));
-        MachineInventory.AddItem(new Product("Onion", 5,  10));
-        MachineInventory.AddItem(new Product("Quote", 3,  8));
+        MachineInventory.AddProduct(new Product("Tomato", 12, 67));
+        MachineInventory.AddProduct(new Product("Avocado", 34, 89));
+        MachineInventory.AddProduct(new Product("Onion", 5,  10));
+        MachineInventory.AddProduct(new Product("Quote", 3,  8));
 
         // give user some money
         User.AccountBalance = Random.Next(100, 200);
@@ -221,33 +221,53 @@ public class Machine
     
             Console.WriteLine();
             ColorController.WritePurpleTable(table);
-            
-            while (true)
+
+            GoToCheckout(chosenProduct, chosenNumberOfProductsInt);
+        }
+    }
+
+    public void GoToCheckout(Product chosenProduct, int chosenNumberOfProductsInt)
+    {
+        while (true)
+        {
+            Console.WriteLine();
+            ColorController.WriteYellowAndBlue(["You have ", User.AccountBalance.ToString(), " credits in your account. Do you wish to continue? (y/n): "]);
+                
+            var answer = Console.ReadLine();
+
+            if (answer.ToLower() != "y" && answer.ToLower() != "n")
             {
-                Console.WriteLine();
-                ColorController.WriteYellowAndBlue(["You have ", User.AccountBalance.ToString(), " credits in your account. Do you wish to continue? (y/n): "]);
+                ColorController.WriteRedLine("Try again.");
+                continue;
+            }
                 
-                var answer = Console.ReadLine();
+            if (answer.ToLower() == "n")
+            {
+                ColorController.WriteGreenLine("OK, Purchase cancelled.");
+                return;
+            }
                 
-                if (answer.ToLower() == "y")
+            // answer.ToLower() == "y": 
+            User.AccountBalance -= (chosenProduct.Price * chosenNumberOfProductsInt);
+            chosenProduct.ItemsInStock -= chosenNumberOfProductsInt;
+                
+            // todo:
+            // check if product exists by checking its unique name, if so, increase the count. otherwise create new.   
+            User.Inventory.AddProduct(new Product(chosenProduct.Name, chosenProduct.Price, chosenNumberOfProductsInt));
+                
+            ColorController.WriteGreenLine("Purchase successful. Visit \"my stuff\" to see what you bought.");
+
+            if (chosenProduct.Name == "Quote")
+            {
+                for (int i = 0; i < chosenNumberOfProductsInt; i++)
                 {
-                    User.AccountBalance -= (chosenProduct.Price * chosenNumberOfProductsInt);
-                    chosenProduct.ItemsInStock -= chosenNumberOfProductsInt;
-                    
-                    // todo:
-                    // check if product exists by checking its unique name, if so, increase the count. otherwise create new.   
-                    User.Inventory.AddItem(new Product(chosenProduct.Name, chosenProduct.Price, chosenNumberOfProductsInt));
-                    
-                    ColorController.WriteGreenLine("Purchase successful. Visit \"my stuff\" to see what you bought.");
-                    return;
-                }
-                
-                if (answer.ToLower() == "n")
-                {
-                    ColorController.WriteGreenLine("OK, Purchase cancelled.");
-                    return;
+                    var quote = QuoteFetcher.GetData().GetAwaiter().GetResult();
+                        
+                    User.Inventory.AddQuote(quote);
                 }
             }
+                
+            return;
         }
     }
 
@@ -269,6 +289,47 @@ public class Machine
         
         Console.WriteLine();
         ColorController.WritePurpleTable(table);
+
+        InspectUsersProducts();
+    }
+
+    public void InspectUsersProducts()
+    {
+        while (true)
+        {
+            ColorController.WriteYellow("Would you like to inspect any items? (y/n): ");
+            
+            var answerInspectItems = Console.ReadLine();
+                    
+            if (answerInspectItems.ToLower() == "n")
+            {
+                ColorController.WriteGreenLine("OK, going back home.");
+                return;
+            }
+            
+            if (answerInspectItems.ToLower() != "y")
+            {
+                ColorController.WriteRedLine("Try again.");
+                continue;
+            }
+
+            Console.WriteLine();
+            ColorController.WriteYellow("Enter the name of the product you wish to inspect: "); // only works with qoute so far
+            
+            var answerWhichItem = Console.ReadLine();
+
+            if (answerWhichItem.ToLower() == "quote")
+            {
+                // todo:
+                // represent with color coding and/or table
+                foreach (var quote in User.Inventory.Quotes)
+                {
+                    Console.WriteLine(quote.Author);
+                    Console.WriteLine(quote.Content);
+                    Console.WriteLine();
+                }
+            }
+        }
 
     }
 }
