@@ -8,8 +8,8 @@ public class QuoteFetcher
     {
         string baseUrl = "https://api.quotable.io/quotes/random?maxLength=50/";
 
-        try 
-        { 
+        try
+        {
             using (HttpClient client = new HttpClient())
             {
                 using (HttpResponseMessage res = await client.GetAsync(baseUrl))
@@ -17,15 +17,15 @@ public class QuoteFetcher
                     using (HttpContent content = res.Content)
                     {
                         string data = await content.ReadAsStringAsync();
-                        
+
                         if (data != null)
                         {
                             var dataParsed = JArray.Parse(data)[0];
-                            
+
                             Quote quote = new Quote(dataParsed["content"].ToString(), dataParsed["author"].ToString());
                             return quote;
                         }
-                        
+
                         // (if null:)
                         Quote altQuote = new Quote("The quote API seems to be broken...", "Joar Hansson");
                         return altQuote;
@@ -33,11 +33,11 @@ public class QuoteFetcher
                 }
             }
         }
-        catch(Exception exception) 
+        catch (Exception exception)
         {
             Console.WriteLine(exception);
         }
-        
+
         return null;
     }
 }

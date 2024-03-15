@@ -11,7 +11,7 @@ public class ColorController
         Console.WriteLine(input);
         Console.ResetColor();
     }
-    
+
     // Green. For affirmations and similar.
     public static void WriteGreenLine(string input)
     {
@@ -19,7 +19,7 @@ public class ColorController
         Console.WriteLine(input);
         Console.ResetColor();
     }
-    
+
     // Yellow. For instructions and questions from the machine.
     public static void WriteYellow(string input)
     {
@@ -27,7 +27,7 @@ public class ColorController
         Console.Write(input);
         Console.ResetColor();
     }
-    
+
     // Yellow/Blue. For instructions and questions from the machine, where some words need to be highlighted.
     public static void WriteYellowAndBlue(List<string> input)
     {
@@ -44,10 +44,10 @@ public class ColorController
                 Console.Write(input[i]);
             }
         }
-        
+
         Console.ResetColor();
     }
-    
+
     // Purple. For informative tables. 
     public static void WritePurpleTable(ConsoleTable table)
     {
@@ -55,7 +55,7 @@ public class ColorController
         table.Write(Format.Minimal);
         Console.ResetColor();
     }
-    
+
     // Purple. For other information. 
     public static void WritePurpleLine(string input)
     {
@@ -63,5 +63,4 @@ public class ColorController
         Console.WriteLine(input);
         Console.ResetColor();
     }
-
 }
