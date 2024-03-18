@@ -343,15 +343,14 @@ public class Machine
 
             if (answerWhichItem.ToLower() == "quote")
             {
-                var table = new ConsoleTable("Quote", "Author");
+                Console.WriteLine();
 
                 foreach (var quote in User.Inventory.Quotes)
                 {
-                    table.AddRow(quote.Content, quote.Author);
+                    ColorController.WritePurpleLine(quote.Content);
+                    ColorController.WritePurpleLine($"/ {quote.Author}");
+                    Console.WriteLine();
                 }
-
-                Console.WriteLine();
-                ColorController.WritePurpleTable(table);
             }
         }
     }
