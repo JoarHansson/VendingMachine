@@ -21,10 +21,9 @@ public class Machine
     public void Run()
     {
         // add some products to the inventory
-        MachineInventory.AddProduct(new Product("Tomato", 12, 67));
-        MachineInventory.AddProduct(new Product("Avocado", 34, 89));
-        MachineInventory.AddProduct(new Product("Onion", 5, 10));
-        MachineInventory.AddProduct(new Product("Quote", 3, 8));
+        MachineInventory.AddProduct(new Product("Quote", 3, 9));
+        MachineInventory.AddProduct(new Product("Dog fact", 5, 7));
+        MachineInventory.AddProduct(new Product("Cat fact", 8, 4));
 
         // give user some money
         User.AccountBalance = Random.Next(100, 200);
@@ -52,7 +51,6 @@ public class Machine
 
             ColorController.WriteRedLine("Please try again.");
         }
-
 
         string command;
 
@@ -237,16 +235,10 @@ public class Machine
             Console.WriteLine();
             ColorController.WriteYellowAndBlue([
                 "You have ", User.AccountBalance.ToString(),
-                " credits in your account. Do you wish to continue? (y/n): "
+                " credits in your account. Do you wish to continue?", " (y/n)", ": "
             ]);
 
             var answer = Console.ReadLine();
-
-            if (answer.ToLower() != "y" && answer.ToLower() != "n")
-            {
-                ColorController.WriteRedLine("Try again.");
-                continue;
-            }
 
             if (answer.ToLower() == "n")
             {
@@ -254,10 +246,15 @@ public class Machine
                 return;
             }
 
+            if (answer.ToLower() != "y")
+            {
+                ColorController.WriteRedLine("Try again.");
+                continue;
+            }
+
             // answer.ToLower() == "y": 
             User.AccountBalance -= (chosenProduct.Price * chosenNumberOfProductsInt);
             chosenProduct.ItemsInStock -= chosenNumberOfProductsInt;
-
 
             // check if product exists by checking its unique name, if so, increase the count. otherwise create new.
             var createNewProduct = true;
@@ -279,15 +276,39 @@ public class Machine
 
             ColorController.WriteGreenLine("Purchase successful. Visit \"my stuff\" to see what you bought.");
 
+            // make API requests depending on product choice and save the values in users inventory
             if (chosenProduct.Name == "Quote")
             {
                 for (int i = 0; i < chosenNumberOfProductsInt; i++)
                 {
-                    var quote = QuoteFetcher.GetData().GetAwaiter().GetResult();
+                    var quote = Fetcher.GetRandomQuote().GetAwaiter().GetResult();
 
                     User.Inventory.AddQuote(quote);
                 }
             }
+
+            if (chosenProduct.Name == "Dog fact")
+            {
+                for (int i = 0; i < chosenNumberOfProductsInt; i++)
+                {
+                    var dogFact = Fetcher.GetRandomDogFact().GetAwaiter().GetResult();
+
+                    User.Inventory.AddDogFact(dogFact);
+                }
+            }
+
+            if (chosenProduct.Name == "Cat fact")
+            {
+                for (int i = 0; i < chosenNumberOfProductsInt; i++)
+                {
+                    var catFact = Fetcher.GetRandomCatFact().GetAwaiter().GetResult();
+
+                    User.Inventory.AddCatFact(catFact);
+                }
+            }
+
+            // todo
+            // maybe convert the above to a switch statement for better readability... 
 
             return;
         }
@@ -317,10 +338,10 @@ public class Machine
 
     public void InspectUsersProducts()
     {
+        ColorController.WriteYellowAndBlue(["Would you like to inspect any items?", " (y/n)", ": "]);
+
         while (true)
         {
-            ColorController.WriteYellow("Would you like to inspect any items? (y/n): ");
-
             var answerInspectItems = Console.ReadLine();
 
             if (answerInspectItems.ToLower() == "n")
@@ -332,15 +353,30 @@ public class Machine
             if (answerInspectItems.ToLower() != "y")
             {
                 ColorController.WriteRedLine("Try again.");
+                Console.WriteLine();
+                ColorController.WriteYellowAndBlue(["Would you like to inspect any items?", " (y/n)", ": "]);
                 continue;
             }
 
             Console.WriteLine();
             ColorController.WriteYellow("Enter the name of the product you wish to inspect: ");
-            // only works with qoute so far
 
             var answerWhichItem = Console.ReadLine();
 
+            var usersProducts = User.Inventory.Products
+                .Select(product => product.Name.ToLower())
+                .ToList();
+
+            if (!usersProducts.Contains(answerWhichItem.ToLower()))
+            {
+                ColorController.WriteRedLine("No item by that name. Check your spelling.");
+                Console.WriteLine();
+                ColorController.WriteYellowAndBlue(["Would you like to try again?", " (y/n)", ": "]);
+                continue;
+            }
+
+            // todo
+            // maybe convert to switch statement for better readability... 
             if (answerWhichItem.ToLower() == "quote")
             {
                 Console.WriteLine();
@@ -352,6 +388,30 @@ public class Machine
                     Console.WriteLine();
                 }
             }
+
+            if (answerWhichItem.ToLower() == "cat fact")
+            {
+                Console.WriteLine();
+
+                foreach (var catFact in User.Inventory.CatFacts)
+                {
+                    ColorController.WritePurpleLine(catFact.Content);
+                    Console.WriteLine();
+                }
+            }
+
+            if (answerWhichItem.ToLower() == "dog fact")
+            {
+                Console.WriteLine();
+
+                foreach (var dogFact in User.Inventory.DogFacts)
+                {
+                    ColorController.WritePurpleLine(dogFact.Content);
+                    Console.WriteLine();
+                }
+            }
+
+            ColorController.WriteYellowAndBlue(["Would you like to inspect any more items?", " (y/n)", ": "]);
         }
     }
 }
