@@ -2,7 +2,7 @@ using Newtonsoft.Json.Linq;
 
 namespace VendingMachine;
 
-public class Fetcher
+public abstract class Fetcher
 {
     public static async Task<Quote> GetRandomQuote()
     {
@@ -36,9 +36,8 @@ public class Fetcher
         catch (Exception exception)
         {
             Console.WriteLine(exception);
+            return null;
         }
-
-        return null;
     }
 
     public static async Task<CatFact> GetRandomCatFact()
@@ -73,9 +72,8 @@ public class Fetcher
         catch (Exception exception)
         {
             Console.WriteLine(exception);
+            return null;
         }
-
-        return null;
     }
 
     public static async Task<DogFact> GetRandomDogFact()
@@ -110,8 +108,7 @@ public class Fetcher
         catch (Exception exception)
         {
             Console.WriteLine(exception);
+            return null;
         }
-
-        return null;
     }
 }

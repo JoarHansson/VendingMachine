@@ -2,7 +2,7 @@ using ConsoleTables;
 
 namespace VendingMachine;
 
-public class ColorController
+public abstract class ColorController
 {
     // Red. For errors and similar.
     public static void WriteRedLine(string input)

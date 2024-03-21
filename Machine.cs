@@ -4,7 +4,7 @@ namespace VendingMachine;
 
 public class Machine
 {
-    public Dictionary<string, string> Commands { get; set; } = new Dictionary<string, string>()
+    private Dictionary<string, string> Commands { get; set; } = new Dictionary<string, string>()
     {
         { "help", "List all available commands." },
         { "money", "Show your account balance." },
@@ -14,9 +14,9 @@ public class Machine
         { "quit", "Quit the application." }
     };
 
-    public Inventory MachineInventory { get; set; } = new Inventory();
-    public User User { get; set; } = new User();
-    public Random Random { get; set; } = new Random();
+    private Inventory MachineInventory { get; set; } = new Inventory();
+    private User User { get; set; } = new User();
+    private Random Random { get; set; } = new Random();
 
     public void Run()
     {
@@ -81,11 +81,11 @@ public class Machine
         } while (command != "quit");
 
         Console.WriteLine();
-        ColorController.WritePurpleLine("Bye!");
+        ColorController.WritePurpleLine($"Bye {User.Name}!");
         Thread.Sleep(1000);
     }
 
-    public string GetCommand()
+    private string GetCommand()
     {
         while (true)
         {
@@ -104,7 +104,7 @@ public class Machine
         }
     }
 
-    public void RunCommandHelp()
+    private void RunCommandHelp()
     {
         var table = new ConsoleTable("Command", "Action");
 
@@ -120,13 +120,13 @@ public class Machine
         ColorController.WritePurpleTable(table);
     }
 
-    public void RunCommandShowAccountBalance()
+    private void RunCommandShowAccountBalance()
     {
         Console.WriteLine();
         ColorController.WritePurpleLine($"You have {User.AccountBalance} credits in your account.");
     }
 
-    public void RunCommandListProducts()
+    private void RunCommandListProducts()
     {
         var table = new ConsoleTable("Product", "Price", "Items in stock");
 
@@ -139,7 +139,7 @@ public class Machine
         ColorController.WritePurpleTable(table);
     }
 
-    public void RunCommandBuyProducts()
+    private void RunCommandBuyProducts()
     {
         while (true)
         {
@@ -228,7 +228,7 @@ public class Machine
         }
     }
 
-    public void GoToCheckout(Product chosenProduct, int chosenNumberOfProductsInt)
+    private void GoToCheckout(Product chosenProduct, int chosenNumberOfProductsInt)
     {
         while (true)
         {
@@ -307,14 +307,11 @@ public class Machine
                 }
             }
 
-            // todo
-            // maybe convert the above to a switch statement for better readability... 
-
             return;
         }
     }
 
-    public void RunCommandShowUsersProducts()
+    private void RunCommandShowUsersProducts()
     {
         if (User.Inventory.Products.Count == 0)
         {
@@ -336,7 +333,7 @@ public class Machine
         InspectUsersProducts();
     }
 
-    public void InspectUsersProducts()
+    private void InspectUsersProducts()
     {
         ColorController.WriteYellowAndBlue(["Would you like to inspect any items?", " (y/n)", ": "]);
 
@@ -375,8 +372,6 @@ public class Machine
                 continue;
             }
 
-            // todo
-            // maybe convert to switch statement for better readability... 
             if (answerWhichItem.ToLower() == "quote")
             {
                 Console.WriteLine();
