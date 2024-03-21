@@ -1,4 +1,4 @@
-namespace VendingMachine;
+namespace VendingMachine.Products;
 
 public class Product
 {

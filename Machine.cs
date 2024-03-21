@@ -1,4 +1,5 @@
 using ConsoleTables;
+using VendingMachine.Products;
 
 namespace VendingMachine;
 

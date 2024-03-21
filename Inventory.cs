@@ -1,3 +1,5 @@
+using VendingMachine.Products;
+
 namespace VendingMachine;
 
 public class Inventory
